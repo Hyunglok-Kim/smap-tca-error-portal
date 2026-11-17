@@ -1,0 +1,396 @@
+<style>
+  .portal-logo-bar {
+    position: fixed;
+    left: 0; right: 0; bottom: 0;
+    z-index: 9999;
+    background: rgba(255,255,255,0.78);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    border-top: 1px solid rgba(15,23,42,0.08);
+    box-shadow: 0 -4px 14px rgba(15,23,42,0.06);
+    padding: 8px 14px;
+    display: flex; align-items: center; justify-content: center;
+    gap: 22px; flex-wrap: wrap;
+    opacity: 0.85;
+    transition: opacity 0.2s;
+  }
+  .portal-logo-bar:hover { opacity: 1; }
+  .portal-logo-bar a {
+    display: inline-flex; align-items: center; height: 48px;
+    transition: transform 0.15s;
+  }
+  .portal-logo-bar a:hover { transform: translateY(-1px); }
+  .portal-logo-bar img {
+    max-height: 48px; max-width: 110px;
+    width: auto; height: auto; object-fit: contain;
+  }
+  .portal-logo-bar .logo-hydroai img { max-height: 60px; max-width: 140px; }
+  @media (max-width: 900px) {
+    .portal-logo-bar { padding: 6px 8px; gap: 12px; }
+    .portal-logo-bar a { height: 36px; }
+    .portal-logo-bar img { max-height: 36px; max-width: 80px; }
+    .portal-logo-bar .logo-hydroai img { max-height: 44px; max-width: 100px; }
+  }
+<style>
+  .portal-logo-bar {
+    position: fixed;
+    left: 0; right: 0; bottom: 0;
+    z-index: 9999;
+    background: rgba(255,255,255,0.78);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    border-top: 1px solid rgba(15,23,42,0.08);
+    box-shadow: 0 -4px 14px rgba(15,23,42,0.06);
+    padding: 8px 14px;
+    display: flex; align-items: center; justify-content: center;
+    gap: 22px; flex-wrap: wrap;
+    opacity: 0.85;
+    transition: opacity 0.2s;
+  }
+  .portal-logo-bar:hover { opacity: 1; }
+  .portal-logo-bar a {
+    display: inline-flex; align-items: center; height: 48px;
+    transition: transform 0.15s;
+  }
+  .portal-logo-bar a:hover { transform: translateY(-1px); }
+  .portal-logo-bar img {
+    max-height: 48px; max-width: 110px;
+    width: auto; height: auto; object-fit: contain;
+  }
+  .portal-logo-bar .logo-hydroai img { max-height: 60px; max-width: 140px; }
+  @media (max-width: 900px) {
+    .portal-logo-bar { padding: 6px 8px; gap: 12px; }
+    .portal-logo-bar a { height: 36px; }
+    .portal-logo-bar img { max-height: 36px; max-width: 80px; }
+    .portal-logo-bar .logo-hydroai img { max-height: 44px; max-width: 100px; }
+  }
+
+  .hd-hub[hidden], .hd-panel[hidden] { display: none !important; }
+  .hd-hub, .hd-panel { margin-top: 70px; }
+  .hd-wrap { max-width: 1120px; margin: 0 auto; padding: 48px 24px 96px; }
+  .hd-eyebrow { font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase; opacity: 0.6; margin: 0 0 8px; }
+  .hd-title { font-size: 44px; line-height: 1.15; font-weight: 600; margin: 0 0 14px; }
+  .hd-lead { font-size: 18px; line-height: 1.55; margin: 0 0 36px; opacity: 0.85; text-align: justify; }
+  /* the hub's cards: a moving picture on top, then what the dataset is, its key facts, and what the portal lets you do */
+  .hd-hub .hd-wrap { max-width: 1320px; padding-top: 28px; }
+  .hd-hub .hd-lead { margin-bottom: 20px; }
+  .hd-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; align-items: stretch; }
+  .hd-card { display: flex; flex-direction: column; overflow: hidden; border-radius: 16px; background: #fff; border: 1px solid rgba(15,23,42,0.10); color: inherit; text-decoration: none; transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s; }
+  a.hd-card:hover { transform: translateY(-3px); box-shadow: 0 14px 34px rgba(15,23,42,0.13); border-color: rgba(15,23,42,0.25); }
+  .hd-media { position: relative; display: block; flex: none; aspect-ratio: 16 / 9; background: #0F1318 center / cover no-repeat; overflow: hidden; }
+  .hd-media video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+  .hd-cap { position: absolute; left: 12px; bottom: 12px; max-width: calc(100% - 24px); padding: 5px 11px; border-radius: 999px; background: rgba(15,19,24,0.74); color: #fff; font-size: 12px; line-height: 1.25; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .hd-cap:empty { display: none; }
+  .hd-credit { position: absolute; right: 9px; top: 7px; font-size: 9.5px; line-height: 1.2; color: rgba(255,255,255,0.6); text-shadow: 0 1px 2px rgba(0,0,0,0.7); }
+  .hd-text { display: flex; flex-direction: column; flex: 1; gap: 10px; padding: 18px 22px 20px; }
+  .hd-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .hd-card h3 { font-size: 22px; line-height: 1.25; font-weight: 600; margin: 0; }
+  .hd-card p { font-size: 14.5px; line-height: 1.5; margin: 0; opacity: 0.82; }
+  .hd-tag { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; padding: 4px 10px; border-radius: 999px; background: rgba(15,23,42,0.07); }
+  .hd-tag.hd-live { background: rgba(22,128,61,0.12); color: #14622f; }
+  .hd-tag.hd-live::before { content: ""; display: inline-block; width: 6px; height: 6px; margin: 0 6px 1px 0; border-radius: 50%; background: #1a8a44; }
+  .hd-facts { display: grid; grid-template-columns: 98px minmax(0, 1fr); column-gap: 12px; row-gap: 6px; margin: 0; padding: 11px 0 0; border-top: 1px solid rgba(15,23,42,0.09); font-size: 13px; line-height: 1.42; }
+  .hd-facts dt { margin: 0; padding-top: 2px; font-size: 10.5px; font-weight: 400; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.55; }
+  .hd-facts dd { margin: 0; }
+  .hd-inside { display: grid; gap: 5px; margin: 0; padding: 11px 0 0; border-top: 1px solid rgba(15,23,42,0.09); list-style: none; font-size: 13px; line-height: 1.42; }
+  .hd-inside li { position: relative; margin: 0; padding-left: 16px; }
+  .hd-inside li::before { content: ""; position: absolute; left: 2px; top: 0.56em; width: 6px; height: 6px; border-radius: 50%; background: rgba(15,23,42,0.32); }
+  .hd-inside .hd-inside-h { padding-left: 0; font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.55; }
+  .hd-inside .hd-inside-h::before { display: none; }
+  .hd-go { margin-top: auto; padding-top: 4px; font-size: 15px; font-weight: 600; }
+  /* between a phone and a wide window the three cards stack, each with its picture beside its text */
+  @media (min-width: 761px) and (max-width: 1180px) {
+    .hd-grid { grid-template-columns: 1fr; }
+    .hd-card { flex-direction: row; }
+    .hd-media { flex: 0 0 44%; aspect-ratio: auto; min-height: 300px; background-size: contain; }
+    .hd-media video { object-fit: contain; }                  /* a globe keeps its whole disc; */
+    .hd-media.hd-fill { background-size: cover; }
+    .hd-media.hd-fill video { object-fit: cover; }            /* a picture that fills its frame may be cropped */
+  }
+  @media (max-width: 760px) { .hd-grid { grid-template-columns: 1fr; } }
+  /* four cards: two by two on a desktop, four across where the window is wide enough for cards as wide as before */
+  @media (min-width: 1181px) and (max-width: 1699px) { .hd-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (min-width: 1700px) { .hd-hub .hd-wrap { max-width: 1760px; } .hd-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+  .hd-card.is-soon { opacity: 0.6; cursor: default; border-style: dashed; }
+  .hd-thumb { display: block; width: 100%; aspect-ratio: 21 / 8; border-radius: 10px; background-color: #fff; background-repeat: no-repeat; background-size: 166.67% auto; background-position: 50% 47.8%; border: 1px solid rgba(15,23,42,0.08); margin-bottom: 4px; }
+  .hd-hero { margin: 0 auto 32px; max-width: 900px; }
+  .hd-hero-frame { position: relative; overflow: hidden; aspect-ratio: 880 / 853; background: #fff; border-radius: 16px; border: 1px solid rgba(15,23,42,0.10); }
+  .hd-hero-frame img { position: absolute; top: 0; left: -29.55%; width: 159.09%; max-width: none; height: auto; display: block; }
+  .hd-hero figcaption { font-size: 14px; line-height: 1.5; opacity: 0.75; margin-top: 10px; text-align: center; }
+  .hd-back { display: inline-block; margin: 18px 24px 6px; font-size: 15px; font-weight: 600; color: inherit; text-decoration: none; padding: 8px 14px; border-radius: 999px; background: #fff; border: 1px solid rgba(15,23,42,0.12); }
+  .hd-back:hover { border-color: rgba(15,23,42,0.35); }
+  /* entering a dataset: the panel fades in and its back link rises; the hub's cards rise in turn when coming back;
+     a portal frame is revealed only once it has loaded, behind a breathing globe mark until then */
+  @keyframes hdRise { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+  @keyframes hdFade { from { opacity: 0; } to { opacity: 1; } }
+  .hd-panel.is-in { animation: hdFade .45s ease both; }
+  .hd-panel.is-in .hd-back { animation: hdRise .5s cubic-bezier(.2,.7,.2,1) both; }
+  .hd-hub.is-in { animation: hdFade .4s ease both; }
+  .hd-hub.is-in .hd-card { animation: hdRise .55s cubic-bezier(.2,.7,.2,1) both; }
+  .hd-hub.is-in .hd-card:nth-child(2) { animation-delay: .08s; }
+  .hd-hub.is-in .hd-card:nth-child(3) { animation-delay: .16s; }
+  .hd-hub.is-in .hd-card:nth-child(4) { animation-delay: .24s; }
+  .portal-frame { position: relative; }
+  .portal-frame iframe { opacity: 0; transition: opacity .7s ease; }
+  .portal-frame.is-loaded iframe { opacity: 1; }
+  .portal-wait { position: absolute; left: 0; right: 0; top: 0; height: 640px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; color: rgba(15,23,42,0.55); font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; transition: opacity .4s; }
+  .portal-wait i { display: block; width: 72px; height: 72px; border-radius: 50%; background: radial-gradient(circle at 34% 32%, #dbe9ff 0%, #4a86c5 45%, #173a66 100%); box-shadow: 0 0 0 12px rgba(74,134,197,0.10), 0 0 0 26px rgba(74,134,197,0.05); animation: hdBreathe 1.8s ease-in-out infinite; }
+  @keyframes hdBreathe { 0%, 100% { transform: scale(0.92); } 50% { transform: scale(1.05); } }
+  .portal-frame.is-loaded .portal-wait { opacity: 0; pointer-events: none; }
+  @media (prefers-reduced-motion: reduce) { .hd-panel.is-in, .hd-panel.is-in .hd-back, .hd-hub.is-in, .hd-hub.is-in .hd-card, .portal-wait i { animation: none; } .portal-frame iframe { transition: none; } }
+  .hd-specs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin: 0 0 36px; }
+  .hd-spec { background: #fff; border: 1px solid rgba(15,23,42,0.10); border-radius: 14px; padding: 16px 18px; }
+  .hd-spec span { display: block; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; opacity: 0.6; margin-bottom: 6px; }
+  .hd-spec strong { font-size: 18px; font-weight: 600; line-height: 1.3; }
+  .hd-body { max-width: none; }
+  .hd-body p, .hd-body li { text-align: justify; }
+  .hd-body h2 { font-size: 24px; font-weight: 600; margin: 34px 0 10px; }
+  .hd-body p, .hd-body li { font-size: 16px; line-height: 1.65; }
+  .hd-body ul { padding-left: 20px; margin: 0; }
+  .hd-note { background: #fff; border: 1px dashed rgba(15,23,42,0.25); border-radius: 14px; padding: 16px 18px; }
+  @media (max-width: 900px) {
+    .hd-specs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .hd-title { font-size: 32px; }
+    .hd-wrap { padding: 32px 18px 72px; }
+  }
+</style>
+<div class="hd-hub" id="hd-hub">
+  <div class="hd-wrap">
+    <p class="hd-eyebrow">HydroAI Data</p>
+    <h1 class="hd-title">Datasets</h1>
+    <p class="hd-lead">Data products and observation networks distributed by the HydroAI Lab. Select a dataset to explore.</p>
+    <div class="hd-grid">
+      <a class="hd-card" href="#cvs">
+        <span class="hd-media hd-fill" role="img" aria-label="The Hampyeong site from the drone, flight after flight through the 2026 growing season, with the ground stations marked" style="background-image: url('https://hyunglok-kim.github.io/hdca-data-portal/embed/media/cvs.jpg');">
+          <video muted loop playsinline preload="none" poster="https://hyunglok-kim.github.io/hdca-data-portal/embed/media/cvs.jpg" data-webm="https://hyunglok-kim.github.io/hdca-data-portal/embed/media/cvs.webm" data-mp4="https://hyunglok-kim.github.io/hdca-data-portal/embed/media/cvs.mp4" aria-hidden="true" tabindex="-1"></video>
+          <span class="hd-cap" aria-hidden="true" data-caps='[[0, "Drone flight, 7 May 2026"], [0.93, "Drone flight, 25 May 2026"], [2.13, "Drone flight, 24 July 2026"], [3.33, "Drone flight, 17 August 2026"], [4.53, "Drone flight, 29 August 2026"], [5.73, "Drone flight, 15 September 2026"], [6.93, "Drone flight, 22 September 2026"], [8.13, "Drone flight, 9 October 2026"], [9.33, "Drone flight, 16 October 2026"], [10.53, "Drone flight, 9 November 2026"], [11.73, "Drone flight, 7 May 2026"]]'></span>
+        </span>
+        <span class="hd-text">
+          <span class="hd-tags"><span class="hd-tag hd-live">Live</span><span class="hd-tag">Cal/val site</span></span>
+          <h3>NASA-GIST Core Validation Site</h3>
+          <p>South Korea&rsquo;s first Core Validation Site (CVS), at Hampyeong: one 1 km grid cell measured from the ground, from drones and from satellites, to check the soil moisture maps of NASA SMAP and NASA-ISRO NISAR.</p>
+          <dl class="hd-facts">
+          <dt>Site</dt><dd>1 km &times; 1 km cell, six kinds of land cover</dd>
+          <dt>Ground</dt><dd>47 stations, 82 soil moisture and temperature sensors, every 5 minutes since June 2025</dd>
+          <dt>Drones</dt><dd>1 m maps every one to two weeks in season: true colour, NDVI, thermal, LiDAR, L-band radiometer</dd>
+          <dt>Satellites</dt><dd>HLS, Landsat, MODIS, Sentinel-1, NISAR (beta)</dd>
+          </dl>
+          <ul class="hd-inside">
+          <li class="hd-inside-h">In the portal</li>
+          <li>Ground, drone and satellite views side by side, date by date</li>
+          <li>Each station&rsquo;s series and its soil properties</li>
+          <li>Data files on request</li>
+          </ul>
+          <span class="hd-go">Open portal &rarr;</span>
+        </span>
+      </a>
+      <a class="hd-card" href="#et">
+        <span class="hd-media" role="img" aria-label="From the globe down to the Korean Peninsula and into a 30 m sample area: mean annual evapotranspiration" style="background-image: url('https://hyunglok-kim.github.io/hdca-data-portal/embed/media/et.jpg');">
+          <video muted loop playsinline preload="none" poster="https://hyunglok-kim.github.io/hdca-data-portal/embed/media/et.jpg" data-webm="https://hyunglok-kim.github.io/hdca-data-portal/embed/media/et.webm" data-mp4="https://hyunglok-kim.github.io/hdca-data-portal/embed/media/et.mp4" aria-hidden="true" tabindex="-1"></video>
+          <span class="hd-cap" aria-hidden="true" data-caps='[[0, "Korean Peninsula: available now"], [3.0, "Mean annual ET, 2016&ndash;2024"], [7.2, "A 30 m sample area: Anmyeon"], [11.0, "Korean Peninsula: available now"]]'></span>
+          <span class="hd-credit">Imagery &copy; Esri, Maxar, Earthstar Geographics</span>
+        </span>
+        <span class="hd-text">
+          <span class="hd-tags"><span class="hd-tag hd-live">Live</span><span class="hd-tag">Evapotranspiration</span></span>
+          <h3>Global 30m-ET</h3>
+          <p>Prithvi-OpenET: monthly evapotranspiration at 30 m from Landsat and Sentinel-2 imagery, estimated with a geospatial foundation model. The Korean Peninsula is open now as a preview; other regions are produced on request.</p>
+          <dl class="hd-facts">
+          <dt>Resolution</dt><dd>30 m, monthly</dd>
+          <dt>Record</dt><dd>April 2013 &ndash; August 2026, 160 monthly maps</dd>
+          <dt>Coverage</dt><dd>Korean Peninsula now; any other land area on request</dd>
+          <dt>Status</dt><dd>Paper under review. Until it is accepted the maps are shown down to 120 m, and at 30 m in eight sample areas</dd>
+          </dl>
+          <ul class="hd-inside">
+          <li class="hd-inside-h">In the portal</li>
+          <li>Mean annual ET, the seasonal cycle, or any single month</li>
+          <li>Click a place for its monthly series and full record</li>
+          <li>Request a region</li>
+          </ul>
+          <span class="hd-go">Open portal &rarr;</span>
+        </span>
+      </a>
+      <a class="hd-card" href="#hdca">
+        <span class="hd-media" role="img" aria-label="The globe turning once: soil moisture, then vegetation optical depth, then the effective scattering albedo" style="background-image: url('https://hyunglok-kim.github.io/hdca-data-portal/embed/media/hdca.jpg');">
+          <video muted loop playsinline preload="none" poster="https://hyunglok-kim.github.io/hdca-data-portal/embed/media/hdca.jpg" data-webm="https://hyunglok-kim.github.io/hdca-data-portal/embed/media/hdca.webm" data-mp4="https://hyunglok-kim.github.io/hdca-data-portal/embed/media/hdca.mp4" aria-hidden="true" tabindex="-1"></video>
+          <span class="hd-cap" aria-hidden="true" data-caps='[[0, "Soil moisture, 2015&ndash;2025 mean"], [3.67, "Vegetation optical depth"], [7.67, "Effective scattering albedo"], [11.67, "Soil moisture, 2015&ndash;2025 mean"]]'></span>
+          <span class="hd-credit">Imagery &copy; Esri, Maxar, Earthstar Geographics</span>
+        </span>
+        <span class="hd-text">
+          <span class="hd-tags"><span class="hd-tag hd-live">Live</span><span class="hd-tag">Soil moisture</span></span>
+          <h3>Hybrid Dual-Channel Algorithm (HDCA)</h3>
+          <p>L-band soil moisture that retrieves the vegetation scattering albedo instead of assuming it: HDCA solves soil moisture, VOD and a time-varying effective scattering albedo together from SMAP brightness temperatures, with first-order canopy scattering, so dense forests no longer read as persistently wet.</p>
+          <dl class="hd-facts">
+          <dt>Grid</dt><dd>36 km EASE-Grid 2.0, global land</dd>
+          <dt>Record</dt><dd>Daily, April 2015 &ndash; December 2025</dd>
+          <dt>Variables</dt><dd>Soil moisture, vegetation optical depth (VOD), effective scattering albedo</dd>
+          <dt>Status</dt><dd>Paper accepted in Remote Sensing of Environment</dd>
+          </dl>
+          <ul class="hd-inside">
+          <li class="hd-inside-h">In the portal</li>
+          <li>Daily, monthly and climatological maps on a globe</li>
+          <li>Click a cell for its full daily record of all three variables</li>
+          <li>Five validation sites marked</li>
+          </ul>
+          <span class="hd-go">Open portal &rarr;</span>
+        </span>
+      </a>
+      <a class="hd-card" href="#tca">
+        <span class="hd-media" role="img" aria-label="The globe turning once: SMAP soil moisture, then its triple-collocation error, then the error with its gaps filled by the model" style="background-image: url('https://hyunglok-kim.github.io/smap-tca-error-portal/embed/media/tca.jpg');">
+          <video muted loop playsinline preload="none" poster="https://hyunglok-kim.github.io/smap-tca-error-portal/embed/media/tca.jpg" data-webm="https://hyunglok-kim.github.io/smap-tca-error-portal/embed/media/tca.webm" data-mp4="https://hyunglok-kim.github.io/smap-tca-error-portal/embed/media/tca.mp4" aria-hidden="true" tabindex="-1"></video>
+          <span class="hd-cap" aria-hidden="true" data-caps='[[0, "SMAP soil moisture, 2015&ndash;2023 mean"], [3.67, "Its TCA error &sigma;, where TCA could be computed"], [7.67, "&sigma; with the gaps filled by LGBM"], [11.67, "SMAP soil moisture, 2015&ndash;2023 mean"]]'></span>
+          <span class="hd-credit">Imagery &copy; Esri, Maxar, Earthstar Geographics</span>
+        </span>
+        <span class="hd-text">
+          <span class="hd-tags"><span class="hd-tag hd-live">Live</span><span class="hd-tag">Soil moisture error</span></span>
+          <h3>SMAP Time-Variant Error</h3>
+          <p>How wrong is each SMAP soil-moisture value? The random error of every retrieval from triple collocation with ASCAT and GLDAS in a moving window, and, where triple collocation fails, predicted from SMAP&rsquo;s own variables by LGBM and DNN models, with flags that say which is which and why.</p>
+          <dl class="hd-facts">
+          <dt>Grid</dt><dd>36 km EASE-Grid 2.0, global land</dd>
+          <dt>Record</dt><dd>Every overpass, 6 a.m. and 6 p.m., February 2015 &ndash; November 2023</dd>
+          <dt>Variables</dt><dd>Soil moisture, TCA error &sigma;, &sigma; gap-filled by LGBM and by DNN, four TCA flags</dd>
+          <dt>Status</dt><dd>Published in GIScience &amp; Remote Sensing (2025); 2022 on Zenodo, other years on request</dd>
+          </dl>
+          <ul class="hd-inside">
+          <li class="hd-inside-h">In the portal</li>
+          <li>Overpass, monthly and climatological maps on a globe; where the error could be computed, filled, or not</li>
+          <li>Click a cell for its nine-year record with the four flags</li>
+          <li>Zenodo link, citation and collaboration contact</li>
+          </ul>
+          <span class="hd-go">Open portal &rarr;</span>
+        </span>
+      </a>
+    </div>
+  </div>
+</div>
+
+<div class="hd-panel" id="hd-panel-cvs" hidden>
+  <a class="hd-back" href="#datasets">&larr; All datasets</a>
+<div style="margin-top: 0;">
+  <iframe
+    data-src="https://hyunglok-kim.github.io/hampyeong-cal-val/index.html?embed=1&hidefooter=1"
+    width="100%" height="3000"
+    style="border:0; display:block; width:100%; min-height:3000px; background:#fff;"
+    scrolling="no"></iframe>
+</div>
+<div class="portal-logo-bar" aria-label="Partner organizations">
+  <a href="https://hydroai.net" target="_blank" rel="noopener" class="logo-hydroai" title="HydroAI"><img src="https://hyunglok-kim.github.io/hampyeong-cal-val/logos/hydroai.png" alt="HydroAI"></a>
+  <a href="https://www.gist.ac.kr/kr/main.html" target="_blank" rel="noopener" title="GIST"><img src="https://hyunglok-kim.github.io/hampyeong-cal-val/logos/GIST.png" alt="GIST"></a>
+  <a href="https://www.jpl.nasa.gov" target="_blank" rel="noopener" title="NASA JPL"><img src="https://hyunglok-kim.github.io/hampyeong-cal-val/logos/JPL.png" alt="NASA JPL"></a>
+  <a href="https://www.nasa.gov/goddard" target="_blank" rel="noopener" title="NASA GSFC"><img src="https://hyunglok-kim.github.io/hampyeong-cal-val/logos/GSFC.png" alt="NASA GSFC"></a>
+  <a href="https://smap.jpl.nasa.gov" target="_blank" rel="noopener" title="NASA SMAP"><img src="https://hyunglok-kim.github.io/hampyeong-cal-val/logos/SMAP.png" alt="NASA SMAP"></a>
+</div>
+</div>
+
+<div class="hd-panel" id="hd-panel-et" hidden>
+  <a class="hd-back" href="#datasets">&larr; All datasets</a>
+<div style="margin-top: 0;">
+  <iframe
+    data-src="https://hyunglok-kim.github.io/prithvi-openet-portal/index.html?embed=1&hidefooter=1"
+    width="100%" height="3000"
+    style="border:0; display:block; width:100%; min-height:3000px; background:#fff;"
+    scrolling="no"></iframe>
+</div>
+<div class="portal-logo-bar" aria-label="Partner organizations">
+  <a href="https://hydroai.net" target="_blank" rel="noopener" class="logo-hydroai" title="HydroAI"><img src="https://hyunglok-kim.github.io/prithvi-openet-portal/assets/logos/hydroai.png" alt="HydroAI"></a>
+  <a href="https://www.gist.ac.kr/kr/main.html" target="_blank" rel="noopener" title="GIST"><img src="https://hyunglok-kim.github.io/prithvi-openet-portal/assets/logos/GIST.png" alt="GIST"></a>
+</div>
+</div>
+
+<div class="hd-panel" id="hd-panel-hdca" hidden>
+  <a class="hd-back" href="#datasets">&larr; All datasets</a>
+<div style="margin-top: 0;">
+  <iframe
+    data-src="https://hyunglok-kim.github.io/hdca-data-portal/index.html?embed=1&hidefooter=1"
+    width="100%" height="3000"
+    style="border:0; display:block; width:100%; min-height:3000px; background:#fff;"
+    scrolling="no"></iframe>
+</div>
+<div class="portal-logo-bar" aria-label="Partner organizations">
+  <a href="https://hydroai.net" target="_blank" rel="noopener" class="logo-hydroai" title="HydroAI"><img src="https://hyunglok-kim.github.io/hdca-data-portal/assets/logos/hydroai.png" alt="HydroAI"></a>
+  <a href="https://www.gist.ac.kr/kr/main.html" target="_blank" rel="noopener" title="GIST"><img src="https://hyunglok-kim.github.io/hdca-data-portal/assets/logos/GIST.png" alt="GIST"></a>
+  <a href="https://www.mit.edu" target="_blank" rel="noopener" title="MIT"><img src="https://hyunglok-kim.github.io/hdca-data-portal/assets/logos/MIT.png" alt="MIT"></a>
+  <a href="https://www.jpl.nasa.gov" target="_blank" rel="noopener" title="NASA JPL"><img src="https://hyunglok-kim.github.io/hdca-data-portal/assets/logos/JPL.png" alt="NASA JPL"></a>
+  <a href="https://en.ilmatieteenlaitos.fi" target="_blank" rel="noopener" title="FMI"><img src="https://hyunglok-kim.github.io/hdca-data-portal/assets/logos/FMI.png" alt="FMI"></a>
+</div>
+</div>
+
+<div class="hd-panel" id="hd-panel-tca" hidden>
+  <a class="hd-back" href="#datasets">&larr; All datasets</a>
+<div style="margin-top: 0;">
+  <iframe
+    data-src="https://hyunglok-kim.github.io/smap-tca-error-portal/index.html?embed=1&hidefooter=1"
+    width="100%" height="3000"
+    style="border:0; display:block; width:100%; min-height:3000px; background:#fff;"
+    scrolling="no"></iframe>
+</div>
+<div class="portal-logo-bar" aria-label="Partner organizations">
+  <a href="https://hydroai.net" target="_blank" rel="noopener" class="logo-hydroai" title="HydroAI"><img src="https://hyunglok-kim.github.io/smap-tca-error-portal/assets/logos/hydroai.png" alt="HydroAI"></a>
+  <a href="https://www.gist.ac.kr/kr/main.html" target="_blank" rel="noopener" title="GIST"><img src="https://hyunglok-kim.github.io/smap-tca-error-portal/assets/logos/GIST.png" alt="GIST"></a>
+  <a href="https://www.kiaps.org" target="_blank" rel="noopener" title="KIAPS"><img src="https://hyunglok-kim.github.io/smap-tca-error-portal/assets/logos/KIAPS.png" alt="KIAPS"></a>
+</div>
+</div>
+
+<script>
+(function () {
+  var hub = document.getElementById('hd-hub');
+  var panels = { cvs: document.getElementById('hd-panel-cvs'), et: document.getElementById('hd-panel-et'), hdca: document.getElementById('hd-panel-hdca'), tca: document.getElementById('hd-panel-tca') };
+  if (!hub) return;
+  function show(key) {
+    var active = panels[key] ? key : '';
+    hub.hidden = !!active;
+    Object.keys(panels).forEach(function (k) { if (panels[k]) panels[k].hidden = (k !== active); });
+    var el = active ? panels[active] : hub;
+    el.classList.remove('is-in'); void el.offsetWidth; el.classList.add('is-in');
+    setTimeout(function () { el.classList.remove('is-in'); }, 1000);
+    if (active && panels[active]) {
+      var f = panels[active].querySelector('iframe[data-src]');
+      if (f && !f.getAttribute('src')) {
+        var wrap = f.parentNode;
+        wrap.classList.add('portal-frame');
+        var w = document.createElement('div'); w.className = 'portal-wait'; w.innerHTML = '<i></i><span>Opening the portal</span>'; wrap.appendChild(w);
+        var reveal = function () { wrap.classList.add('is-loaded'); setTimeout(function () { w.remove(); }, 800); };
+        f.addEventListener('load', reveal);
+        setTimeout(reveal, 8000);   /* never leave a frame hidden if the load event is missed */
+        f.setAttribute('src', f.getAttribute('data-src'));
+      }
+    }
+    window.scrollTo(0, 0);
+  }
+  function route() { show((window.location.hash || '').replace('#', '')); }
+  /* The HDCA, ET and TCA portals report their height; size the frame that sent it to its content instead of the fixed 3000 px. */
+  window.addEventListener('message', function (e) {
+    if (e.origin !== 'https://hyunglok-kim.github.io' || !e.data || e.data.type !== 'portalHeight') return;
+    var h = Number(e.data.height);
+    ['hdca', 'et', 'tca'].forEach(function (k) {
+      var f = panels[k] && panels[k].querySelector('iframe');
+      if (f && f.contentWindow === e.source && h >= 600) { f.style.height = Math.min(h, 20000) + 'px'; f.style.minHeight = '0'; f.setAttribute('height', String(Math.min(h, 20000))); }
+    });
+  });
+  window.addEventListener('hashchange', route);
+  route();
+})();
+/* The hub's pictures. Each is a short silent loop, fetched and played only while its card is on screen; the words on
+   it follow the loop. A visitor who has asked for reduced motion sees the still picture. */
+(function () {
+  var vids = [].slice.call(document.querySelectorAll('.hd-media video'));
+  if (!vids.length) return;
+  function decode(t) { var e = document.createElement('span'); e.innerHTML = t; return e.textContent; }
+  vids.forEach(function (v) {
+    var c = v.parentNode.querySelector('.hd-cap'), list = [];
+    try { list = JSON.parse(c.getAttribute('data-caps')).map(function (x) { return [x[0], decode(x[1])]; }); } catch (e) {}
+    function say() { var txt = list.length ? list[0][1] : ''; for (var i = 0; i < list.length; i++) if (v.currentTime >= list[i][0]) txt = list[i][1]; if (c && c.textContent !== txt) c.textContent = txt; }
+    v.addEventListener('timeupdate', say); say();
+  });
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  function load(v) {
+    if (v.getAttribute('data-ready')) return;
+    v.setAttribute('data-ready', '1');
+    ['webm', 'mp4'].forEach(function (t) { var u = v.getAttribute('data-' + t); if (!u) return; var s = document.createElement('source'); s.src = u; s.type = 'video/' + t; v.appendChild(s); });
+    v.load();
+  }
+  function play(v) { load(v); v.muted = true; var p = v.play(); if (p && p.catch) p.catch(function () {}); }
+  if (!('IntersectionObserver' in window)) { vids.forEach(play); return; }
+  var io = new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) play(e.target); else e.target.pause(); }); }, { threshold: 0.2 });
+  vids.forEach(function (v) { io.observe(v); });
+})();
+</script>

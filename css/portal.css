@@ -371,3 +371,5 @@ h1 .h1-sub { font-size: 16px; }
 .usebox p { margin: 0; font-size: 13.5px; color: var(--text-2); line-height: 1.55; }
 .usebox .mini-h { margin-bottom: 4px; }
 @media (max-width: 1000px) { .usebox { grid-template-columns: 1fr; } }
+/* five layer buttons do not fit a phone in one row: the segments wrap there (HDCA's four did fit) */
+@media (max-width: 760px) { .seg:not(.seg-sm) { flex-wrap: wrap; border-radius: 14px; } .layerbar { gap: 8px; } }
