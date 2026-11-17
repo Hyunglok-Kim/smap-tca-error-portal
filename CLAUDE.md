@@ -171,3 +171,16 @@ URL parameters: `embed=1`, `hidefooter=1`, `data=/path/`, `nas=/path`, `intro=0`
 - The time-invariant TCA error (`TCA_VARerr_TI_WS201_nodTh100_corrTh0.nc`, 19 MB, one field per variable) is not on the
   site; it would make a sixth layer (the paper's Fig. 5a).
 - Korean UI text, a dark theme, a favicon.
+
+## hydroai.net (done 2026-11-17)
+
+The Data page is one Webflow HTML Embed (hub cards + one panel per dataset + routing script); its text is kept equal to
+`embed/hydroai-data-page.html` here and in the HDCA repo (`~/orca/projects/hdca/portal/embed/`, the canonical copy; other
+sessions edit it for their datasets — message them before opening the Designer). The TCA card follows the hd-card markup
+(poster + silent loop from `embed/media/tca.*`, captions in `data-caps`), the panel is an `<iframe data-src>` + logo bar, the
+script's `panels` table and the height-message list include `tca`. Four cards: two by two between 1181 and 1699 px and four
+across in a 1760 px wrap above that (the PI has not chosen this; it is one rule to change). How the edit was made without
+touching the clipboard: Designer → Pages → Data → Navigator → Code Embed → Settings → Edit code; in the page,
+`view = document.querySelector('.cm-content').cmView.view`; check `view.state.doc.toString()` (length, sha1) against the
+committed copy; `fetch()` the new text from this repository's Pages address; `view.dispatch({changes: {from: 0, to: len,
+insert}})`; Save & Close; re-open and hash; Publish to hydroai.net only. Then commit the same text in both repositories.
