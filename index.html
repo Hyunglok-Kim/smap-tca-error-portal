@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SMAP time-variant soil moisture error · TCA with ML gap filling, 36 km, 2015–2023</title>
+
+<link rel="preconnect" href="https://unpkg.com" crossorigin />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&display=swap" />
+<link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.24.1/dist/maplibre-gl.css" />
+<link rel="stylesheet" href="css/portal.css?v=20261117b" />
+</head>
+<body>
+
+<div id="boot" class="boot" role="status" aria-live="polite">
+  <div class="boot-mark" aria-hidden="true"></div>
+  <p class="boot-title">SMAP time-variant error</p>
+  <p class="boot-sub" id="bootMsg">Loading the catalog…</p>
+</div>
+
+<header class="top">
+  <div class="brand">
+    <p class="eyebrow">HydroAI Lab · GIST</p>
+    <h1>SMAP time-variant soil moisture error <span class="h1-sub">· triple collocation error, gap-filled with machine learning · 36 km, every overpass, 2015–2023</span></h1>
+  </div>
+  <dl class="facts" id="facts" aria-label="Dataset at a glance">
+    <div><dt>Grid</dt><dd>36 km · EASE-Grid 2.0</dd></div>
+    <div><dt>Time step</dt><dd>Twice daily (6 a.m., 6 p.m.)</dd></div>
+    <div><dt>Record</dt><dd id="factRecord">—</dd></div>
+    <div><dt>Coverage</dt><dd>Global land</dd></div>
+    <div><dt>Error of</dt><dd>SMAP L3 soil moisture, v9</dd></div>
+  </dl>
+</header>
+
+<nav class="tabs" role="tablist" aria-label="Sections">
+  <button role="tab" class="tab on" data-tab="explore" aria-selected="true">Explore</button>
+  <button role="tab" class="tab" data-tab="download" aria-selected="false">Download</button>
+  <button role="tab" class="tab" data-tab="code" aria-selected="false">Use in code</button>
+  <button role="tab" class="tab" data-tab="about" aria-selected="false">About the data</button>
+</nav>
+
+<main>
+
+<!-- ───────────────────────────── Explore ───────────────────────────── -->
+<section id="tab-explore" class="tabpane on" role="tabpanel">
+  <div class="lead-boxes">
+  <aside class="novelty when" aria-label="When to use this data">
+    <p class="mini-h">When to use this data</p>
+    <p><b>Whenever a use of SMAP soil moisture needs to know how wrong each value may be.</b> Every SMAP soil-moisture retrieval on this site comes with an estimate of its random error (a standard deviation in m³/m³) for that overpass, at that cell.<span class="novelty-detail"> Use it as the observation error in land data assimilation, as the weight when merging SMAP with other satellite or model soil moisture, to screen or down-weight suspect retrievals, or to see where and when SMAP is least trustworthy (frozen and snow-covered seasons, dense forest, deserts with little signal). Until now such error estimates existed only for the fraction of overpasses on which triple collocation could be computed; here a model trained on SMAP's own variables fills most of the rest, so an error accompanies <span id="whenShare">most</span> of the retrievals, twice a day, 2015–2023.</span> <a href="#paper" class="novelty-more">What the paper shows →</a></p>
+  </aside>
+  <aside class="novelty" aria-label="What is new">
+    <p class="mini-h">What is new</p>
+    <p><b>The error changes with time, and the gaps are filled from SMAP alone.</b> Triple collocation analysis (TCA) with ASCAT and GLDAS as the other two members gives SMAP's error in a 201-step moving window (about one season), not one static number per cell.<span class="novelty-detail"> TCA fails wherever its assumptions break or data are short (four flags mark why); a Light Gradient Boosting Machine and a deep neural network, trained only on SMAP L3 and its ancillary variables (18 predictors), predict the error there. The stand-alone model is more accurate than one fed with GLDAS (mean absolute error 0.0069 against 0.0088 m³/m³) and raises the number of error estimates in time by about 119 %.</span> <a href="#paper" class="novelty-more">How it works →</a></p>
+  </aside>
+  </div>
+  <!-- Data use in one line (PI, 2026-11-17): where the files are, what to cite, whom to write to for collaboration. -->
+  <p class="use-strip" aria-label="Using these data"><span><b>Data</b> 2022 on <a href="https://doi.org/10.5281/zenodo.14850520" target="_blank" rel="noopener">Zenodo, doi:10.5281/zenodo.14850520</a>; other years on request</span><span><b>Please cite</b> <a href="https://doi.org/10.1080/15481603.2025.2475572" target="_blank" rel="noopener">Kim et al. (2025), <i>GIScience &amp; Remote Sensing</i></a></span><span><b>Research collaboration</b> <a href="mailto:hyunglokkim@gist.ac.kr">hyunglokkim@gist.ac.kr</a></span></p>
+  <div class="explore">
+    <div class="mapcol">
+      <div class="layerbar" aria-label="What the map shows">
+        <div class="seg" id="varSeg" role="group" aria-label="Variable">
+          <button data-var="SM" class="on" title="SMAP L3 soil moisture, the quantity whose error is estimated (no quality screening)">Soil moisture</button>
+          <button data-var="ERR" title="TCA error standard deviation where triple collocation could be computed">σ, TCA</button>
+          <button data-var="LGBM" title="TCA error where available, LGBM prediction where not">σ, filled (LGBM)</button>
+          <button data-var="DNN" title="TCA error where available, DNN prediction where not">σ, filled (DNN)</button>
+          <button data-var="COV" title="Where the error could be computed, where it was filled, and why it is missing">Coverage</button>
+        </div>
+        <select id="covSel" class="covsel" aria-label="Coverage layer" hidden></select>
+        <div class="seg" id="modeSeg" role="group" aria-label="Period">
+          <button data-mode="all" class="on" title="Mean of every overpass in the record">Record mean</button>
+          <button data-mode="clim" title="Mean of one calendar month over all years">Seasonal cycle</button>
+          <button data-mode="month" title="Mean of the overpasses of one month">Month</button>
+          <button data-mode="day" title="One overpass — a 6 a.m. or 6 p.m. swath set">Overpass</button>
+        </div>
+        <div class="when" id="when"></div>
+      </div>
+
+      <div class="mapwrap">
+        <div id="map" aria-label="Map of the selected variable"></div>
+
+        <div class="nomap-msg" id="noMap" role="alert" hidden>
+          <p class="nomap-h">The map cannot be drawn in this browser right now</p>
+          <p>The map is drawn with WebGL, the browser's graphics acceleration, and this browser is not providing it. Either it is switched off, or the browser has lost it: Chrome, for one, switches it off after its graphics process has failed several times, and keeps it off until it is restarted.</p>
+          <ul>
+            <li>Quit the browser completely and open it again. That usually brings it back.</li>
+            <li>If it does not, switch on graphics (hardware) acceleration in the browser's settings. In Chrome it is under Settings, System: “Use graphics acceleration when available”.</li>
+            <li>Or open this page in another browser.</li>
+          </ul>
+          <p>The rest of the page does not need the map: the cards beside it, the figures from the paper below, and the Download, Use in code and About the data tabs.</p>
+        </div>
+
+        <div class="map-ui map-tr">
+          <select id="jump" class="mbtn jump" aria-label="Go to a place" title="Fly to one of the paper's points or a region"><option value="">Go to…</option></select>
+          <button class="mbtn" id="btnGlobe" title="Back to the whole globe">World</button>
+          <label class="mbtn slider" title="Opacity of the data layer">
+            <span>Opacity</span>
+            <input type="range" id="opacity" min="0" max="100" value="100" aria-label="Layer opacity" />
+          </label>
+        </div>
+
+        <div class="map-ui map-bl legend" id="legend" aria-label="Colour scale">
+          <div class="legend-head">
+            <span class="legend-title" id="lgTitle">—</span>
+            <div class="seg seg-sm" id="scaleSeg" role="group" aria-label="Colour scale range">
+              <button data-scale="fixed" class="on" title="Same range for every layer, so layers can be compared">Fixed</button>
+              <button data-scale="auto" title="Stretch to this layer's 2nd–98th percentile">Stretch</button>
+            </div>
+          </div>
+          <canvas id="lgHist" width="240" height="34" aria-hidden="true"></canvas>
+          <div class="lg-bar" id="lgBar"></div>
+          <div class="lg-ticks" id="lgTicks"></div>
+          <div class="lg-cats" id="lgCats" hidden></div>
+          <p class="lg-note"><span class="sw sw-nodata"></span><span id="lgNodata">No value</span></p>
+        </div>
+
+        <div class="map-ui map-br readout" id="readout" aria-live="off">
+          <span id="roRes">36 km cell</span>
+          <span id="roVal"></span>
+        </div>
+      </div>
+      <p class="hint" id="hint">Click any land cell: the panel on the right shows its series for the selected year and the whole 2015–2023 record — soil moisture, the TCA error, the two reconstructions and the four flags, overpass by overpass. Each cell is 36 km; the map draws the cells as they are, without smoothing.</p>
+    </div>
+
+    <aside class="side">
+      <section class="card" id="cardLayer">
+        <p class="mini-h">On the map</p>
+        <h2 id="lyTitle">—</h2>
+        <p class="sub" id="lySub"></p>
+        <div class="tiles">
+          <div class="tile"><p class="tile-l" id="lyMeanL">Mean over land with a value</p><p class="tile-v"><span id="lyMean">—</span><small id="lyUnit"></small></p></div>
+          <div class="tile">
+            <p class="tile-l" id="lyCoverL">Land cells with a value</p>
+            <p class="tile-v"><span id="lyCover">—</span><small>%</small></p>
+            <div class="meter" aria-hidden="true"><i id="lyCoverBar"></i></div>
+          </div>
+        </div>
+        <div class="status-row" id="lyStatus" hidden></div>
+        <p class="flag" id="lyFlag" hidden></p>
+      </section>
+
+      <section class="card" id="cardSeries">
+        <div class="card-head">
+          <div>
+            <p class="mini-h" id="srKicker">Seasonal cycle</p>
+            <h2 id="srTitle">Global mean</h2>
+          </div>
+          <button class="ghost" id="srReset" hidden>← Global mean</button>
+        </div>
+        <p class="sub" id="srSub"></p>
+        <figure class="chart" id="chart"></figure>
+        <div class="chart-actions">
+          <button class="ghost" id="srTableBtn" aria-expanded="false">Show table</button>
+          <button class="ghost" id="srCsv">Download CSV</button>
+        </div>
+        <div class="tablewrap" id="srTable" hidden></div>
+        <div class="record" id="recordBox" hidden>
+          <p class="mini-h">Full record at this cell</p>
+          <p class="sub" id="rcSub"></p>
+          <figure class="chart" id="chartRecord"></figure>
+          <div class="chart-actions">
+            <button class="ghost" id="rcTableBtn" aria-expanded="false">Show table</button>
+            <button class="ghost" id="rcCsv">Download CSV (all variables, every overpass)</button>
+          </div>
+          <div class="tablewrap tall" id="rcTable" hidden></div>
+        </div>
+      </section>
+
+      <section class="card" id="cardRecord">
+        <p class="mini-h">The record</p>
+        <h2>Month by month</h2>
+        <p class="sub" id="calSub"></p>
+        <div class="cal" id="cal" role="grid" aria-label="Months with data"></div>
+        <div class="cal-legend" id="calLegend"></div>
+      </section>
+    </aside>
+  </div>
+
+  <!-- The method and the results in plain words, with the paper's own figures. Numbers are quoted from
+       Kim, Kim, Kwon and Nguyen (2025), GIScience & Remote Sensing 62(1), 2475572 (open access, CC BY 4.0). -->
+  <section class="paper" id="paper" aria-labelledby="paperH">
+    <p class="mini-h">From the paper</p>
+    <h2 id="paperH" class="pane-h">How the error is estimated, how the gaps are filled, and how well — in plain words</h2>
+    <p class="lead">No ground truth exists for soil moisture over a 36 km cell, so SMAP's error cannot be measured directly. Triple collocation compares three independent estimates of the same quantity (SMAP, the ASCAT scatterometer and the GLDAS land-surface model) and, from how they disagree, works out the random error of each without calling any of them the truth. The paper does this in a moving window so the error can change with the season, then trains models to supply the error on the overpasses where triple collocation cannot. The six figures below show the pieces.</p>
+
+    <div class="pf">
+      <figure><img src="assets/figures/Fig1.jpg" alt="Flow chart of the eight processing steps, from UTC-to-local-time conversion and resampling to TCA and the training of the SMAP-based and GLDAS-based error models" loading="lazy"><figcaption>Fig. 1 of the paper</figcaption></figure>
+      <div>
+        <h3>1 · The workflow</h3>
+        <p>GLDAS (3-hourly, UTC) is shifted to local time so that it lines up with SMAP's 6 a.m. and 6 p.m. overpasses; ASCAT (12.5 km) and GLDAS (0.25°) are resampled to SMAP's 36 km EASE-Grid 2.0; each series is deseasonalised by subtracting a 201-step moving average (100 days of a.m. plus p.m. steps, about a season), because background seasonality would hide the noise in the covariances. Triple collocation then runs on the three deseasonalised series, both over the whole record (a <b>time-invariant</b> error, one value per cell) and in a 201-step moving window with at least 25 common points (the <b>time-variant</b> error, one value per cell and overpass). The lower part of the chart is the machine-learning stage: features are chosen with a random forest, and a model is trained per year.</p>
+      </div>
+    </div>
+
+    <div class="pf">
+      <figure><img src="assets/figures/Fig4.jpg" alt="Global map of SMAP data counts with six time-series panels, each showing the four TCA flags as black marks, soil moisture, and the time-invariant and time-variant error" loading="lazy"><figcaption>Fig. 4 of the paper</figcaption></figure>
+      <div>
+        <h3>2 · Why the error is so often missing, and the four flags</h3>
+        <p>Triple collocation needs its assumptions to hold and enough common data. Four flags mark the overpasses on which it does not deliver: <b>flag 1</b>, the correlation between the covariance terms is negative; <b>flag 2</b>, fewer than 25 common points in the window; <b>flag 3</b>, the fractional mean squared error falls outside 0–1; <b>flag 4</b>, a negative error variance. At the six points in the figure (one per continent) the black marks in the top strip of each panel show how often that happens: in the Amazon and in the Sahara almost all the time, in Europe and North America in the cold season. Red dots are the time-variant error that survives; it is clearly not constant through the year. The flags travel with this dataset and are shown on the map (Coverage) and in every cell's series.</p>
+      </div>
+    </div>
+
+    <div class="pf">
+      <figure><img src="assets/figures/Fig5.jpg" alt="Four global maps: time-invariant error, mean time-variant error, standard deviation of the time-variant error, and mean fractional mean squared error" loading="lazy"><figcaption>Fig. 5 of the paper</figcaption></figure>
+      <div>
+        <h3>3 · Static and time-variant error side by side</h3>
+        <p>The time-invariant error (a) is higher in wet, densely vegetated regions such as the Amazon and lower in dry ones such as Australia. The mean of the time-variant error (b) has the same pattern and fills many of its gaps, but its standard deviation (c) shows where a single static number misleads: northern Africa has a low error with little variation, the Amazon a high error that also varies a lot, Australia a low mean but a high variability. The fractional mean squared error (d) adds whether the noise is small relative to the soil-moisture signal; in northern Africa the error is small in absolute terms but still dominates a very small signal.</p>
+      </div>
+    </div>
+
+    <div class="pf">
+      <figure><img src="assets/figures/Fig7.jpg" alt="Four density scatter plots of predicted against true time-variant error: GLDAS-based LGBM, SMAP-based LGBM, SMAP-based DNN and SMAP-based Elastic Net" loading="lazy"><figcaption>Fig. 7 of the paper</figcaption></figure>
+      <div>
+        <h3>4 · Predicting the error from SMAP alone</h3>
+        <p>Two sets of predictors were tried: GLDAS variables (an external source) and SMAP's own L3 and ancillary variables (stand-alone; 18 features kept after random-forest ranking and a correlation check). On held-out data the <b>stand-alone LGBM</b> reaches a mean absolute error of <b>0.0069 m³/m³</b> against 0.0088 for the GLDAS-based one; the stand-alone <b>DNN</b> (18-128-64-32-16-1, ReLU, Adam, early stopping) 0.0072. A linear Elastic Net (0.0095) cannot follow the relationship, which is why the two non-linear models are the ones used. Models are trained separately for each year, with Bayesian optimisation of the LGBM hyper-parameters.</p>
+      </div>
+    </div>
+
+    <div class="pf">
+      <figure><img src="assets/figures/Fig8.jpg" alt="Global maps of the mean and standard deviation of the reconstructed time-variant error, and of their differences from the raw values" loading="lazy"><figcaption>Fig. 8 of the paper</figcaption></figure>
+      <div>
+        <h3>5 · The filled record</h3>
+        <p>Where SMAP soil moisture and the predictors exist but triple collocation gave no value, the trained models supply one. The mean (a) and standard deviation (b) of the filled record keep the large-scale pattern of Fig. 5; the difference maps (c, d) show where filling changed the picture: the models give a higher mean error than the raw values in northern Africa (blue) and a lower one in the Amazon and central Africa (red), and more variability almost everywhere except northern Africa. On this site the layers “σ, filled” are exactly this record: the raw TCA value wherever it exists, the model's value elsewhere, and a flag telling the two apart.</p>
+      </div>
+    </div>
+
+    <div class="pf">
+      <figure><img src="assets/figures/Fig9.jpg" alt="Global map of the ratio of recovered error estimates to available SMAP retrievals, with the six time-series panels now including the LGBM and DNN reconstructions" loading="lazy"><figcaption>Fig. 9 of the paper</figcaption></figure>
+      <div>
+        <h3>6 · How much was recovered</h3>
+        <p>The central map is the share of SMAP retrievals that had no error estimate and now have one. It is highest over barren and sparsely vegetated land and lowest over cropland–vegetation mosaics; over the whole record the number of error estimates in time rises by about <b>119 %</b>. The panels repeat the six points of Fig. 4 with the LGBM (orange) and DNN (yellow) values added: where the raw error is sparse (South America, Africa, Australia) the two models agree on the level and differ a little in spread. Recovery is still impossible on overpasses where a predictor is missing (for example the ancillary sand fraction); those are the “no σ” cells in the Coverage layer.</p>
+      </div>
+    </div>
+    <p class="paper-credit">Figures and numbers from Kim, S., Kim, H., Kwon, Y., and Nguyen, H. H. (2025), <i>GIScience &amp; Remote Sensing</i> 62(1), 2475572, <a href="https://doi.org/10.1080/15481603.2025.2475572" target="_blank" rel="noopener">doi:10.1080/15481603.2025.2475572</a> (open access, CC BY 4.0).</p>
+  </section>
+</section>
+
+<!-- ───────────────────────────── Download ───────────────────────────── -->
+<section id="tab-download" class="tabpane" role="tabpanel" hidden>
+  <div class="prose-wide">
+    <h2 class="pane-h">Download</h2>
+    <div class="usebox" aria-label="Using these data">
+      <div><p class="mini-h">Data</p><p>The 2022 file is on Zenodo: <a href="https://doi.org/10.5281/zenodo.14850520" target="_blank" rel="noopener">doi:10.5281/zenodo.14850520</a> (CC BY 4.0). The other years are available on request — write to the addresses below and say which years you need.</p></div>
+      <div><p class="mini-h">Please cite</p><p>If you use these data, cite the paper: Kim, S., Kim, H., Kwon, Y., and Nguyen, H. H. (2025). A stand-alone framework for predicting spatiotemporal errors in satellite-based soil moisture using tree-based models and deep neural networks. <i>GIScience &amp; Remote Sensing</i>, 62(1), 2475572. <a href="https://doi.org/10.1080/15481603.2025.2475572" target="_blank" rel="noopener">doi:10.1080/15481603.2025.2475572</a></p></div>
+      <div><p class="mini-h">Research collaboration</p><p>For joint work with these data — other periods or products, error models for other sensors, assimilation or merging studies — write to Hyunglok Kim, <a href="mailto:hyunglokkim@gist.ac.kr">hyunglokkim@gist.ac.kr</a> (HydroAI Lab, GIST).</p></div>
+    </div>
+    <p class="lead">One NetCDF file per year, 2015–2023, each holding every overpass of that year for all variables. The files are uncompressed float32, 7.9–9.2 GB each, about 80 GB in all.</p>
+    <div class="notice" id="dlNotice"></div>
+    <h3>The files</h3>
+    <div class="tablewrap">
+      <table class="grid" id="dlTable">
+        <thead><tr><th>Year</th><th>File</th><th class="num">Overpasses</th><th>Covers</th><th class="num">Size</th><th>Where</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <p class="form-hint" id="dlMissing"></p>
+    <h3>What is in a file</h3>
+    <table class="grid spec">
+      <tbody>
+        <tr><th>Format</th><td>NetCDF-4 (HDF5), float32, contiguous storage, no compression. Dimensions <code>latitude</code> (406) × <code>longitude</code> (964) × <code>time</code> (730 in a normal year, 732 in a leap year, 630 in 2015 and 2023). Note the order: time is the <b>last</b> dimension, so one cell's whole year is contiguous and one global field is strided.</td></tr>
+        <tr><th>Grid</th><td>EASE-Grid 2.0 global cylindrical equal-area, 36 km (EPSG:6933), 406 rows × 964 columns, row 0 at 83.6° N, column 0 at 179.8° W. <code>latitude(latitude, longitude)</code> and <code>longitude(latitude, longitude)</code> hold the cell centres.</td></tr>
+        <tr><th>Time</th><td><b>There is no time coordinate in the files</b>; the axis is implicit. Index <code>t</code> is day <code>t // 2</code> of the file's period and overpass <code>t % 2</code>: 0 = the 6 a.m. descending overpass, 1 = the 6 p.m. ascending one. The period is the calendar year except in 2015 (20 February – 31 December; SMAP data begin on 31 March, so the first 78 steps are empty) and 2023 (1 January – 11 November). The table above gives each file's first and last day; the code examples build the axis.</td></tr>
+        <tr><th><code>SMAP_SM</code></th><td>SMAP L3 soil moisture (SPL3SMP v9, baseline algorithm), m³/m³, as used in the study: no quality flags applied. NaN where there is no retrieval.</td></tr>
+        <tr><th><code>SMAP_TCA_err</code></th><td>Time-variant TCA error standard deviation σ of SMAP soil moisture, m³/m³, from a 201-step moving window with at least 25 common SMAP–ASCAT–GLDAS points. NaN where any of the four flags is raised.</td></tr>
+        <tr><th><code>SMAP_TCA_err_recons_LGBM</code></th><td>σ with the gaps filled by the stand-alone LGBM model: equal to <code>SMAP_TCA_err</code> wherever that exists, the model's prediction where soil moisture and the 18 predictors exist but the TCA value does not, NaN elsewhere.</td></tr>
+        <tr><th><code>SMAP_TCA_err_recons_DNN</code></th><td>The same with the deep neural network. Its support differs from the LGBM one in a few hundredths of a per cent of the points.</td></tr>
+        <tr><th><code>flags_corr</code>, <code>flags_n_valid</code>, <code>flags_fMSE</code>, <code>flags_negative_vars_err</code></th><td>The four TCA masking flags, 1 = raised, 0 = not raised, defined where <code>SMAP_SM</code> exists (NaN elsewhere). Wherever <code>SMAP_TCA_err</code> exists all four are 0; wherever soil moisture exists without a TCA value at least one is 1.</td></tr>
+        <tr><th>Missing values</th><td>NaN throughout; no <code>_FillValue</code> attribute, no units attributes.</td></tr>
+      </tbody>
+    </table>
+    <h3>Decoding the time axis</h3>
+    <div class="tablewrap">
+      <table class="grid" id="dlAxis">
+        <thead><tr><th>Year</th><th class="num">Steps</th><th>First day</th><th>Last day</th><th class="num">Global step index of the first step</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <p class="form-hint">The global step index counts from 0 at 2015-02-20 a.m. across all nine files, the way the study's own tables (<code>time_index</code>) do.</p>
+  </div>
+</section>
+
+<!-- ───────────────────────────── Code ───────────────────────────── -->
+<section id="tab-code" class="tabpane" role="tabpanel" hidden>
+  <div class="prose-wide">
+    <h2 class="pane-h">Use in code</h2>
+    <p class="lead">The files are ordinary NetCDF-4, but three things need care: the time axis has to be built (it is not in the file), time is the last dimension, and a whole file is 9 GB of uncompressed float32, so read one variable or one cell at a time rather than the whole file.</p>
+
+    <h3>Python — the record at one cell, with the time axis built</h3>
+    <pre class="code" id="codePt"></pre>
+    <button class="ghost copy" data-copy="codePt">Copy</button>
+
+    <h3>Python — a monthly mean map of the filled error</h3>
+    <pre class="code" id="codeMap"></pre>
+    <button class="ghost copy" data-copy="codeMap">Copy</button>
+
+    <h3>Python — which values are raw TCA, which are filled, and why some are missing</h3>
+    <pre class="code" id="codeQc"></pre>
+    <button class="ghost copy" data-copy="codeQc">Copy</button>
+
+    <h3>Browse fields</h3>
+    <p>The map on this site does not use pictures of the data. It reads one 8-bit numeric field per overpass (964 × 406 cells, in which each cell stores the value in whole steps: 0.0035 m³/m³ for soil moisture, 0.001 m³/m³ for σ) and projects and colours it in the browser. A cell's series comes from a separate store with 0.0001 m³/m³ precision for soil moisture and 0.00001 for σ. Both are for looking, not for analysis: use the NetCDF files for any calculation.</p>
+  </div>
+</section>
+
+<!-- ───────────────────────────── About ───────────────────────────── -->
+<section id="tab-about" class="tabpane" role="tabpanel" hidden>
+  <div class="about">
+  <div class="prose">
+    <h2 class="pane-h">About the data</h2>
+    <p class="lead">For every SMAP soil-moisture retrieval on the 36 km global grid, <span id="abRecord">February 2015 to November 2023</span>, this dataset gives the random error of that retrieval as a standard deviation: from triple collocation where it could be computed, from a model trained on SMAP's own variables where it could not, with flags that tell the two apart and say why triple collocation failed.</p>
+
+    <h3 id="ab-algo">The idea</h3>
+    <p>Satellite soil moisture is only as useful as its error is known. Land data assimilation and product merging both need an observation error, and both have had to assume one that is constant in time, because global error estimates (from triple collocation analysis, TCA) were available only as one number per cell, and only for the subset of days on which TCA's assumptions held and enough data coincided.</p>
+    <p>The study computes TCA in a moving window, so the error follows the seasons, and then treats the gaps as a prediction problem: on the overpasses where TCA gives no value but SMAP data exist, a Light Gradient Boosting Machine (LGBM) and a deep neural network (DNN) predict the error from 18 variables that travel with every SMAP L3 retrieval (brightness temperatures, vegetation water content and opacity, surface temperature, albedo, roughness, soil texture, water fractions, terrain, and others). Because the predictors come from SMAP itself, the method needs no external product at prediction time, and it turned out more accurate than a version fed with GLDAS variables.</p>
+
+    <h3 id="ab-inputs">Inputs</h3>
+    <table class="grid spec">
+      <tbody>
+        <tr><th>SMAP</th><td>SMAP L3 Radiometer Global Daily 36 km EASE-Grid Soil Moisture, SPL3SMP version 9 (NASA NSIDC DAAC): soil moisture of both overpasses and the L3 ancillary variables, without quality screening</td></tr>
+        <tr><th>ASCAT</th><td>MetOp ASCAT surface soil moisture climate data record H SAF CDR v7, 12.5 km, converted from degree of saturation to volumetric units with soil porosity, resampled to the 36 km grid</td></tr>
+        <tr><th>GLDAS</th><td>GLDAS Noah 0.25° 3-hourly v2.1 (NASA GES DISC), 0–10 cm layer, converted from UTC to the 8 a.m. / 8 p.m. local time nearest the SMAP and ASCAT overpasses, resampled to the 36 km grid</td></tr>
+        <tr><th>Land cover</th><td>MODIS MCD12C1 v6.1, the most frequent class per cell over 2015–2022 (used in the analysis, not in the stand-alone model)</td></tr>
+      </tbody>
+    </table>
+
+    <h3 id="ab-made">How the fields were made</h3>
+    <ul>
+      <li><b>Deseasonalising.</b> A 201-step moving average (100 days of a.m. and p.m. steps on each side) is subtracted from each of the three series before TCA, so that the covariances reflect noise rather than the seasonal cycle.</li>
+      <li><b>Time-variant TCA.</b> In each 201-step window with at least 25 common points, the error variance of SMAP follows from the variances and covariances of the three series (equations 2–7 of the paper); its square root is <code>SMAP_TCA_err</code>. The value is masked when any of the four flags is raised: negative correlation between covariance terms, fewer than 25 points, fractional mean squared error outside 0–1, negative error variance.</li>
+      <li><b>Gap filling.</b> One LGBM and one DNN model per year, trained on the overpasses where the TCA value exists (80/20 split, Bayesian optimisation of the LGBM hyper-parameters, early stopping for the DNN), then applied where soil moisture and all 18 predictors exist but the TCA value does not. <code>SMAP_TCA_err_recons_LGBM</code> and <code>_DNN</code> are the raw value where it exists and the model's value elsewhere.</li>
+      <li><b>Two overpasses a day.</b> Every step of the record is one overpass set; the two steps of a day are stored one after the other (a.m. first). Monthly and record layers on this site are means over the overpasses that have a value; nothing is smoothed or interpolated.</li>
+    </ul>
+
+    <h3 id="ab-read">Read this before you use the numbers</h3>
+    <ul>
+      <li><b>σ is a random-error standard deviation in m³/m³</b> of the SMAP L3 soil moisture as published, relative to the common signal of SMAP, ASCAT and GLDAS. It says nothing about bias, and it depends on the triplet: a different third member would give somewhat different numbers.</li>
+      <li><b>Raw and filled values are not the same thing.</b> Keep the distinction (the flags, or the difference between <code>SMAP_TCA_err</code> and the <code>_recons</code> fields): a filled value is a prediction with a mean absolute error of about 0.007 m³/m³ on held-out data, and the models were trained where TCA worked, which is not a random sample of where it did not.</li>
+      <li><b>The threshold is low on purpose.</b> 25 common points in a 201-step window give many more time-variant values than a stricter threshold would, at the cost of noisier ones; a comparable study used 90.</li>
+      <li><b>Where predictors are missing nothing is filled.</b> About <span id="abMiss">15 %</span> of SMAP retrievals have neither a TCA value nor a prediction, mostly because an ancillary predictor (for example the sand fraction) is absent for the cell. The Coverage layer shows them.</li>
+      <li><b>No quality screening of SMAP.</b> The soil moisture here is the full L3 field, including retrievals the SMAP quality flag marks as not recommended; the error estimate applies to that field.</li>
+      <li><b>36 km is the grid</b>, and the record ends on 11 November 2023 (the moving window needs 50 days on either side; the first 50 days of 2015 are likewise cut, and SMAP data begin on 31 March 2015).</li>
+      <li><b>Gaps.</b> <span id="abMissing">—</span></li>
+    </ul>
+
+    <h3 id="ab-cite">Citation and collaboration</h3>
+    <p>Please cite the paper when you use these data, and write to <a href="mailto:hyunglokkim@gist.ac.kr">hyunglokkim@gist.ac.kr</a> for research collaboration.</p>
+    <p class="cite">Kim, S., Kim, H., Kwon, Y., and Nguyen, H. H. (2025). A stand-alone framework for predicting spatiotemporal errors in satellite-based soil moisture using tree-based models and deep neural networks. <i>GIScience &amp; Remote Sensing</i>, 62(1), 2475572. <a href="https://doi.org/10.1080/15481603.2025.2475572" target="_blank" rel="noopener">doi:10.1080/15481603.2025.2475572</a></p>
+    <p class="cite">Data: Kim, S., Kim, H., Kwon, Y., and Nguyen, H. H. (2025). NetCDF file: Reconstruction of TCA-based time-variant errors using LGBM and DNN models. Zenodo. <a href="https://doi.org/10.5281/zenodo.14850520" target="_blank" rel="noopener">doi:10.5281/zenodo.14850520</a> (CC BY 4.0; the 2022 file).</p>
+
+    <h3 id="ab-credits">Sources and credits</h3>
+    <p>SMAP L3 Radiometer Global Daily 36 km EASE-Grid Soil Moisture, version 9 (O'Neill et al., NASA NSIDC DAAC, doi:10.5067/4XXOGX0OOW1S). ASCAT surface soil moisture CDR (EUMETSAT H SAF, EO:EUM:DAT:0656). GLDAS Noah Land Surface Model L4 3 hourly 0.25° V2.1 (Beaudoing and Rodell, NASA GES DISC, doi:10.5067/E7TYRXPJKWOQ). MCD12C1 MODIS/Terra+Aqua Land Cover Type Yearly L3 Global 0.05° v061 (Friedl and Sulla-Menashe, NASA LP DAAC). Land outline from Natural Earth (public domain). Background imagery © Esri and its data providers.</p>
+    <p>The work was supported by the AI-based GIST Research Scientist Project (2024), the National Research Foundation of Korea (NRF-2021R1A5A1028138) and the Basic Science Research Program (RS-2024-00392418).</p>
+    <p>Contact: <span id="abContact"></span> — <a id="abMail2"></a> · HydroAI Lab, Gwangju Institute of Science and Technology — <a id="abMail"></a></p>
+  </div>
+
+  <aside class="about-side">
+    <div class="card">
+      <p class="mini-h">At a glance</p>
+      <dl class="glance">
+        <div><dt>Variables</dt><dd>SMAP soil moisture; its TCA error σ; σ gap-filled by LGBM and by DNN; four TCA flags</dd></div>
+        <div><dt>Grid</dt><dd>EASE-Grid 2.0 global, 36 km, 406 × 964 cells</dd></div>
+        <div><dt>Time step</dt><dd>Every SMAP overpass set: 6 a.m. descending and 6 p.m. ascending</dd></div>
+        <div><dt>Record</dt><dd id="glRecord">—</dd></div>
+        <div><dt>Triplet</dt><dd>SMAP L3 v9 · ASCAT H SAF CDR v7 · GLDAS Noah 2.1</dd></div>
+        <div><dt>Files</dt><dd>NetCDF-4, one per year, 80 GB in all</dd></div>
+        <div><dt>Status</dt><dd>Published, <i>GIScience &amp; Remote Sensing</i> 2025 (open access)</dd></div>
+        <div><dt>Licence</dt><dd>CC BY 4.0 (Zenodo record)</dd></div>
+      </dl>
+    </div>
+    <div class="card">
+      <p class="mini-h">On this page</p>
+      <nav class="toc" aria-label="Sections of this page">
+        <a href="#ab-algo">The idea</a>
+        <a href="#ab-inputs">Inputs</a>
+        <a href="#ab-made">How the fields were made</a>
+        <a href="#ab-read">Read this before you use the numbers</a>
+        <a href="#ab-cite">Citation and collaboration</a>
+        <a href="#ab-credits">Sources and credits</a>
+      </nav>
+    </div>
+  </aside>
+  </div>
+</section>
+
+</main>
+
+<footer class="foot" id="foot">
+  <span>HydroAI Lab · Gwangju Institute of Science and Technology</span>
+  <span id="footVer"></span>
+</footer>
+
+<!-- Partner-logo strip, fixed to the bottom of the viewport as on the Hampyeong portal: the home lab, then the
+     institutions of the paper's authors. ?hidefooter=1 hides it. -->
+<footer class="logos-footer" aria-label="Partner organizations">
+  <div class="logos-row">
+    <a href="https://hydroai.net" target="_blank" rel="noopener" class="logo-hydroai" title="HydroAI"><img src="assets/logos/hydroai.png" alt="HydroAI"></a>
+    <a href="https://www.gist.ac.kr/kr/main.html" target="_blank" rel="noopener" title="GIST"><img src="assets/logos/GIST.png" alt="GIST"></a>
+    <a href="https://www.kiaps.org" target="_blank" rel="noopener" title="KIAPS"><img src="assets/logos/KIAPS.png" alt="KIAPS"></a>
+  </div>
+</footer>
+
+<div class="tip" id="tip" role="tooltip" hidden></div>
+
+<script src="https://unpkg.com/maplibre-gl@5.24.1/dist/maplibre-gl.js"></script>
+<script src="https://unpkg.com/pmtiles@4.5.0/dist/pmtiles.js"></script>
+<script src="js/config.js?v=20261117a"></script>
+<script src="js/app.js?v=20261117a"></script>
+</body>
+</html>
