@@ -56,7 +56,7 @@ const CATS = {
   STATUS: [[1, "#2E7BA8", "TCA value (raw σ)"], [2, "#E9A23B", "filled by the model"], [3, "#B85434", "soil moisture, but no σ (a predictor is missing)"]],
   NFLAG: [[1, "#fcbba1", "1 flag"], [2, "#fb6a4a", "2 flags"], [3, "#cb181d", "3 flags"], [4, "#67000d", "4 flags"]],
 };
-const SIG_FIXED = [0, 0.1];
+const SIG_FIXED = [0, 0.06];     // 99 % of the record's sigma values lie below 0.08 and the median is 0.026: 0-0.1 (the paper's scale) left the maps nearly uniform
 const VARS = {
   SM: { name: "Soil moisture", short: "SM", units: "m³/m³", digits: 3, fixed: [0.02, 0.5], tick: 0.05, ramp: "SM" },
   ERR: { name: "TCA error σ", short: "σ, TCA", units: "m³/m³", digits: 4, fixed: SIG_FIXED, tick: 0.01, ramp: "SIG" },
