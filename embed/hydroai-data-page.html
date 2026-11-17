@@ -81,7 +81,6 @@
   .hd-media video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
   .hd-cap { position: absolute; left: 12px; bottom: 12px; max-width: calc(100% - 24px); padding: 5px 11px; border-radius: 999px; background: rgba(15,19,24,0.74); color: #fff; font-size: 12px; line-height: 1.25; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .hd-cap:empty { display: none; }
-  .hd-credit { position: absolute; right: 8px; top: 7px; max-width: calc(100% - 16px); padding: 2px 7px; border-radius: 8px; background: rgba(15,19,24,0.55); text-align: right; font-size: 9.5px; line-height: 1.3; color: rgba(255,255,255,0.86); }
   .hd-text { display: flex; flex-direction: column; flex: 1; gap: 10px; padding: 18px 22px 20px; }
   .hd-tags { display: flex; flex-wrap: wrap; gap: 6px; }
   .hd-card h3 { font-size: 22px; line-height: 1.25; font-weight: 600; margin: 0; }
@@ -188,7 +187,6 @@
         <span class="hd-media" role="img" aria-label="The globe with evapotranspiration over all land, then down to the Korean Peninsula and into a 30 m sample area at Pyeongchang: mean annual evapotranspiration" style="background-image: url('https://hyunglok-kim.github.io/hdca-data-portal/embed/media/et-v2.jpg');">
           <video muted loop playsinline preload="none" poster="https://hyunglok-kim.github.io/hdca-data-portal/embed/media/et-v2.jpg" data-webm="https://hyunglok-kim.github.io/hdca-data-portal/embed/media/et-v2.webm" data-mp4="https://hyunglok-kim.github.io/hdca-data-portal/embed/media/et-v2.mp4" aria-hidden="true" tabindex="-1"></video>
           <span class="hd-cap" aria-hidden="true" data-caps='[[0, "Global background: MODIS ET (MOD16A2GF)"], [3.7, "Korean Peninsula: Prithvi-OpenET, available now"], [6.0, "Mean annual ET, 2016&ndash;2024"], [8.3, "A 30 m sample area: Pyeongchang"], [12.6, "Global background: MODIS ET (MOD16A2GF)"]]'></span>
-          <span class="hd-credit">Background ET: MOD16A2GF (NASA) &middot; Imagery &copy; Esri, Maxar, Earthstar Geographics</span>
         </span>
         <span class="hd-text">
           <span class="hd-tags"><span class="hd-tag hd-live">Live</span><span class="hd-tag">Evapotranspiration</span></span>
@@ -210,10 +208,9 @@
         </span>
       </a>
       <a class="hd-card" href="#hdca">
-        <span class="hd-media" role="img" aria-label="The globe turning with the 2015 to 2025 mean soil moisture, then into the Amazon basin, whose soil moisture plays month by month with the basin's monthly mean drawn beneath" style="background-image: url('https://hyunglok-kim.github.io/hdca-data-portal/embed/media/hdca-v2.jpg');">
-          <video muted loop playsinline preload="none" poster="https://hyunglok-kim.github.io/hdca-data-portal/embed/media/hdca-v2.jpg" data-webm="https://hyunglok-kim.github.io/hdca-data-portal/embed/media/hdca-v2.webm" data-mp4="https://hyunglok-kim.github.io/hdca-data-portal/embed/media/hdca-v2.mp4" aria-hidden="true" tabindex="-1"></video>
-          <span class="hd-cap" aria-hidden="true" data-caps='[[0, "Soil moisture, 2015&ndash;2025 mean"], [3.5, "Into the Amazon basin"], [6.0, "Amazon basin: wet and dry seasons, 2015&ndash;2025"], [12.62, "Soil moisture, 2015&ndash;2025 mean"]]'></span>
-          <span class="hd-credit">Imagery &copy; Esri, Maxar, Earthstar Geographics</span>
+        <span class="hd-media" role="img" aria-label="The globe turning with the 2015 to 2025 mean soil moisture, then into the Amazon basin, whose soil moisture plays month by month with the basin's monthly mean drawn beneath" style="background-image: url('https://hyunglok-kim.github.io/hdca-data-portal/embed/media/hdca-v3.jpg');">
+          <video muted loop playsinline preload="none" poster="https://hyunglok-kim.github.io/hdca-data-portal/embed/media/hdca-v3.jpg" data-webm="https://hyunglok-kim.github.io/hdca-data-portal/embed/media/hdca-v3.webm" data-mp4="https://hyunglok-kim.github.io/hdca-data-portal/embed/media/hdca-v3.mp4" aria-hidden="true" tabindex="-1"></video>
+          <span class="hd-cap" aria-hidden="true" data-caps='[[0, "Soil moisture, 2015&ndash;2025 mean"], [1.67, "Into the Amazon basin"], [3.33, "Amazon basin: wet and dry seasons, 2015&ndash;2025"], [9.96, "Soil moisture, 2015&ndash;2025 mean"]]'></span>
         </span>
         <span class="hd-text">
           <span class="hd-tags"><span class="hd-tag hd-live">Live</span><span class="hd-tag">Soil moisture</span></span>
@@ -238,7 +235,6 @@
         <span class="hd-media" role="img" aria-label="The globe turning once: SMAP soil moisture, then its triple-collocation error, then the error with its gaps filled by the model" style="background-image: url('https://hyunglok-kim.github.io/smap-tca-error-portal/embed/media/tca.jpg');">
           <video muted loop playsinline preload="none" poster="https://hyunglok-kim.github.io/smap-tca-error-portal/embed/media/tca.jpg" data-webm="https://hyunglok-kim.github.io/smap-tca-error-portal/embed/media/tca.webm" data-mp4="https://hyunglok-kim.github.io/smap-tca-error-portal/embed/media/tca.mp4" aria-hidden="true" tabindex="-1"></video>
           <span class="hd-cap" aria-hidden="true" data-caps='[[0, "SMAP soil moisture, 2015&ndash;2023 mean"], [3.67, "Its TCA error &sigma;, where TCA could be computed"], [7.67, "&sigma; with the gaps filled by LGBM"], [11.67, "SMAP soil moisture, 2015&ndash;2023 mean"]]'></span>
-          <span class="hd-credit">Imagery &copy; Esri, Maxar, Earthstar Geographics</span>
         </span>
         <span class="hd-text">
           <span class="hd-tags"><span class="hd-tag hd-live">Live</span><span class="hd-tag">Soil moisture error</span></span>
