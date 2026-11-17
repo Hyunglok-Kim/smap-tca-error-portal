@@ -184,3 +184,10 @@ touching the clipboard: Designer → Pages → Data → Navigator → Code Embed
 `view = document.querySelector('.cm-content').cmView.view`; check `view.state.doc.toString()` (length, sha1) against the
 committed copy; `fetch()` the new text from this repository's Pages address; `view.dispatch({changes: {from: 0, to: len,
 insert}})`; Save & Close; re-open and hash; Publish to hydroai.net only. Then commit the same text in both repositories.
+
+The card's loop is `tca-v2` (2026-11-17, PI: "TCA 지구본도, SMAP time varying 에러를 미국 서부에서 보여줘, hdca처럼"): the globe
+turns with the record-mean σ (LGBM-filled), zooms into the western United States (125–102°W, 31–49°N) and the region's σ plays
+month by month with its monthly area mean drawn beneath; 9.5 s, captions at 0 / 1.67 / 3.33 / 9.0 s. Made with
+`embed/tools/` (see its README); the σ colour range of the portal was tightened to 0–0.06 for it. A re-made loop gets a new
+file name (`tca-v3`…) and the old files go once the new text is live; run the HDCA repo's `check_captions.py` and
+`check_playback.py` before and after publishing.
