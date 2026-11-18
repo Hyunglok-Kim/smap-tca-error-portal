@@ -178,8 +178,9 @@ The Data page is one Webflow HTML Embed (hub cards + one panel per dataset + rou
 `embed/hydroai-data-page.html` here and in the HDCA repo (`~/orca/projects/hdca/portal/embed/`, the canonical copy; other
 sessions edit it for their datasets — message them before opening the Designer). The TCA card follows the hd-card markup
 (poster + silent loop from `embed/media/tca.*`, captions in `data-caps`), the panel is an `<iframe data-src>` + logo bar, the
-script's `panels` table and the height-message list include `tca`. Four cards: two by two between 1181 and 1699 px and four
-across in a 1760 px wrap above that (the PI has not chosen this; it is one rule to change). How the edit was made without
+script's `panels` table and the height-message list include `tca`. Five cards since 2026-11-18 (the Korea water-quality
+session added `#wq`, embed 33,673 chars, sha1 911d4393…): two by two between 1181 and 1699 px, three across at 1700–1999 px,
+five across from 2000 px (the PI has not chosen this; it is one rule to change). How the edit was made without
 touching the clipboard: Designer → Pages → Data → Navigator → Code Embed → Settings → Edit code; in the page,
 `view = document.querySelector('.cm-content').cmView.view`; check `view.state.doc.toString()` (length, sha1) against the
 committed copy; `fetch()` the new text from this repository's Pages address; `view.dispatch({changes: {from: 0, to: len,

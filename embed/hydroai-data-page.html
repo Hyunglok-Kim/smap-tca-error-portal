@@ -110,6 +110,9 @@
   /* four cards: two by two on a desktop, four across where the window is wide enough for cards as wide as before */
   @media (min-width: 1181px) and (max-width: 1699px) { .hd-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   @media (min-width: 1700px) { .hd-hub .hd-wrap { max-width: 1760px; } .hd-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+  /* five cards: three across where four would leave one alone, five across where the window is wide enough */
+  @media (min-width: 1700px) and (max-width: 1999px) { .hd-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  @media (min-width: 2000px) { .hd-hub .hd-wrap { max-width: 2048px; } .hd-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 20px; } }
   .hd-card.is-soon { opacity: 0.6; cursor: default; border-style: dashed; }
   .hd-thumb { display: block; width: 100%; aspect-ratio: 21 / 8; border-radius: 10px; background-color: #fff; background-repeat: no-repeat; background-size: 166.67% auto; background-position: 50% 47.8%; border: 1px solid rgba(15,23,42,0.08); margin-bottom: 4px; }
   .hd-hero { margin: 0 auto 32px; max-width: 900px; }
@@ -129,6 +132,7 @@
   .hd-hub.is-in .hd-card:nth-child(2) { animation-delay: .08s; }
   .hd-hub.is-in .hd-card:nth-child(3) { animation-delay: .16s; }
   .hd-hub.is-in .hd-card:nth-child(4) { animation-delay: .24s; }
+  .hd-hub.is-in .hd-card:nth-child(5) { animation-delay: .32s; }
   .portal-frame { position: relative; }
   .portal-frame iframe { opacity: 0; transition: opacity .7s ease; }
   .portal-frame.is-loaded iframe { opacity: 1; }
@@ -255,6 +259,30 @@
           <span class="hd-go">Open portal &rarr;</span>
         </span>
       </a>
+      <a class="hd-card" href="#wq">
+        <span class="hd-media hd-fill" role="img" aria-label="The six water quality parameters in turn on a map of South Korea&rsquo;s rivers and reservoirs, then into Daecheong Lake, where chlorophyll-a plays through the twelve months of the year" style="background-image: url('https://hyunglok-kim.github.io/korea-water-quality-portal/embed/media/wq-v1.jpg');">
+          <video muted loop playsinline preload="none" poster="https://hyunglok-kim.github.io/korea-water-quality-portal/embed/media/wq-v1.jpg" data-webm="https://hyunglok-kim.github.io/korea-water-quality-portal/embed/media/wq-v1.webm" data-mp4="https://hyunglok-kim.github.io/korea-water-quality-portal/embed/media/wq-v1.mp4" aria-hidden="true" tabindex="-1"></video>
+          <span class="hd-cap" aria-hidden="true" data-caps='[[0, "Water temperature, 2016&ndash;2024 mean"], [1.04, "Suspended solids"], [1.75, "Dissolved oxygen"], [2.46, "Total nitrogen"], [3.17, "Total phosphorus"], [3.88, "Chlorophyll-a"], [4.38, "Into Daecheong Lake: 1 km cells"], [6.04, "Chlorophyll-a through the year"], [10.04, "Water temperature, 2016&ndash;2024 mean"]]'></span>
+        </span>
+        <span class="hd-text">
+          <span class="hd-tags"><span class="hd-tag hd-live">Live</span><span class="hd-tag">Water quality</span></span>
+          <h3>Inland Water Quality of South Korea</h3>
+          <p>Six water quality parameters for the rivers and reservoirs of South Korea on a 1 km grid, each value with a calibrated uncertainty: water temperature, suspended solids, chlorophyll-a, dissolved oxygen, total nitrogen and total phosphorus, estimated from Sentinel-2 imagery, weather reanalysis and national monitoring records. The portal says what each layer can and cannot be used for.</p>
+          <dl class="hd-facts">
+          <dt>Grid</dt><dd>1 km, inland waters of mainland South Korea</dd>
+          <dt>Record</dt><dd>1,012 clear overpass dates, January 2016 &ndash; December 2024</dd>
+          <dt>Variables</dt><dd>Six parameters, each with its uncertainty</dd>
+          <dt>Status</dt><dd>Data open on Zenodo (CC BY 4.0); paper under review at Scientific Data</dd>
+          </dl>
+          <ul class="hd-inside">
+          <li class="hd-inside-h">In the portal</li>
+          <li>One date, a month, the seasonal cycle or the record mean, for each parameter and its uncertainty</li>
+          <li>Click a cell for every overpass at it, with the 95 % interval</li>
+          <li>Download links, code examples, and how far to trust each layer</li>
+          </ul>
+          <span class="hd-go">Open portal &rarr;</span>
+        </span>
+      </a>
     </div>
   </div>
 </div>
@@ -326,10 +354,25 @@
 </div>
 </div>
 
+<div class="hd-panel" id="hd-panel-wq" hidden>
+  <a class="hd-back" href="#datasets">&larr; All datasets</a>
+<div style="margin-top: 0;">
+  <iframe
+    data-src="https://hyunglok-kim.github.io/korea-water-quality-portal/index.html?embed=1&hidefooter=1"
+    width="100%" height="3000"
+    style="border:0; display:block; width:100%; min-height:3000px; background:#fff;"
+    scrolling="no"></iframe>
+</div>
+<div class="portal-logo-bar" aria-label="Partner organizations">
+  <a href="https://hydroai.net" target="_blank" rel="noopener" class="logo-hydroai" title="HydroAI"><img src="https://hyunglok-kim.github.io/korea-water-quality-portal/assets/logos/hydroai.png" alt="HydroAI"></a>
+  <a href="https://www.gist.ac.kr/kr/main.html" target="_blank" rel="noopener" title="GIST"><img src="https://hyunglok-kim.github.io/korea-water-quality-portal/assets/logos/GIST.png" alt="GIST"></a>
+</div>
+</div>
+
 <script>
 (function () {
   var hub = document.getElementById('hd-hub');
-  var panels = { cvs: document.getElementById('hd-panel-cvs'), et: document.getElementById('hd-panel-et'), hdca: document.getElementById('hd-panel-hdca'), tca: document.getElementById('hd-panel-tca') };
+  var panels = { cvs: document.getElementById('hd-panel-cvs'), et: document.getElementById('hd-panel-et'), hdca: document.getElementById('hd-panel-hdca'), tca: document.getElementById('hd-panel-tca'), wq: document.getElementById('hd-panel-wq') };
   if (!hub) return;
   function show(key) {
     var active = panels[key] ? key : '';
@@ -357,7 +400,7 @@
   window.addEventListener('message', function (e) {
     if (e.origin !== 'https://hyunglok-kim.github.io' || !e.data || e.data.type !== 'portalHeight') return;
     var h = Number(e.data.height);
-    ['hdca', 'et', 'tca'].forEach(function (k) {
+    ['hdca', 'et', 'tca', 'wq'].forEach(function (k) {
       var f = panels[k] && panels[k].querySelector('iframe');
       if (f && f.contentWindow === e.source && h >= 600) { f.style.height = Math.min(h, 20000) + 'px'; f.style.minHeight = '0'; f.setAttribute('height', String(Math.min(h, 20000))); }
     });
